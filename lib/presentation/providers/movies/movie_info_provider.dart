@@ -4,6 +4,14 @@ import 'package:cinemapedia/presentation/providers/movies/movies_repository_prov
 // ignore: depend_on_referenced_packages
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/*
+  {
+    '1111': Movie(),
+    '1112': Movie(),
+    '1113': Movie()
+  }
+*/
+
 final movieInfoProvider = StateNotifierProvider<MovieMapNotifier, Map<String, Movie>>((ref) {
   final movieRepository = ref.watch(movieRepositoryProvider);
 
