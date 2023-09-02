@@ -28,6 +28,12 @@ final appRouter = GoRouter(
           ]
         ),
         GoRoute(
+          path: '/categories',
+          builder: (context, state) {
+            return const CategoriesView();
+          }
+        ),
+        GoRoute(
           path: '/favorites',
           builder: (context, state) {
             return const FavoritesView();
