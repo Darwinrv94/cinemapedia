@@ -157,7 +157,9 @@ class _MovieItem extends StatelessWidget {
                   movie.posterPath,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress != null) {
-                      return const CircularProgressIndicator(strokeWidth: 5);
+                      return const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      );
                     }
 
                     return FadeIn(child: child);
