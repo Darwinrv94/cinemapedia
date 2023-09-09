@@ -1,4 +1,6 @@
 import 'package:cinemapedia/domain/entities/movie.dart';
+//import 'package:cinemapedia/domain/repositories/local_storage_repository.dart';
+//import 'package:cinemapedia/infrastructure/repositories/local_storage_repository_impl.dart';
 import 'package:cinemapedia/presentation/providers/movies_provider.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
@@ -201,7 +203,13 @@ class _ActorsByMovie extends ConsumerWidget {
   }
 }
 
-class _CustomSliverAppBar extends StatelessWidget {
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId) {
+  final localStoraRepository = ref.watch(localStorageRepositoryProvider);
+
+  return localStoraRepository.isMovieFavorite(movieId);
+});
+
+class _CustomSliverAppBar extends ConsumerWidget {
   final Movie movie;
 
   const _CustomSliverAppBar({
@@ -209,7 +217,8 @@ class _CustomSliverAppBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFavoriteFuture = ref.watch(isFavoriteProvider(movie.id));
     final size = MediaQuery.of(context).size;
 
     return SliverAppBar(
@@ -219,10 +228,20 @@ class _CustomSliverAppBar extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: () {
-            // TODO: realizar toggle
+            ref.watch(localStorageRepositoryProvider)
+              .toggleFavorite(movie);
+
+            ref.invalidate(isFavoriteProvider(movie.id));
           },
-          icon: const Icon(Icons.favorite_border)
-          // icon: const Icon(Icons.favorite_rounded, color: Colors.red)
+          icon: isFavoriteFuture.when(
+            loading: () => const CircularProgressIndicator(strokeWidth: 2),
+            data: (isFavorite) => isFavorite
+              ? const Icon(Icons.favorite_rounded, color: Colors.red)
+              : const Icon(Icons.favorite_border),
+            error: (_, __) => throw UnimplementedError(),
+          )
+          //const Icon(Icons.favorite_border)
+          //const Icon(Icons.favorite_rounded, color: Colors.red)
         )
       ],
       flexibleSpace: FlexibleSpaceBar(
